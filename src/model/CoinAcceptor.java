@@ -1,17 +1,13 @@
 package model;
 
-public class CoinAcceptor {
-    private int amount;
+public class CoinAcceptor extends PaymentMethod {
 
     public CoinAcceptor(int amount) {
-        this.amount = amount;
+        super(amount);
     }
 
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
+    @Override
+    boolean pay(int amount) {
+        return false;
     }
 }

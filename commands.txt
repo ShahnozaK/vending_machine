@@ -1,0 +1,7 @@
+1. git init
+2. git add .
+3. git git commit
+4.git push
+5. git checkout
+6. git merge
+7. git pull origin master
