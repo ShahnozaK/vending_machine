@@ -9,7 +9,7 @@ public class AppRunner {
 
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
-    private final CoinAcceptor coinAcceptor;
+    private final PaymentMethod paymentMethod;
 
     private static boolean isExit = false;
 
@@ -22,7 +22,7 @@ public class AppRunner {
                 new Mars(ActionLetter.F, 80),
                 new Pistachios(ActionLetter.G, 130)
         });
-        coinAcceptor = new CoinAcceptor(100);
+        paymentMethod = choosePayingMethod();
     }
 
     public static void run() {
@@ -36,7 +36,7 @@ public class AppRunner {
         print("В автомате доступны:");
         showProducts(products);
 
-        print("Монет на сумму: " + coinAcceptor.getAmount());
+        print("Денег на сумму: " + paymentMethod.getAmount());
 
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         allowProducts.addAll(getAllowedProducts().toArray());
@@ -47,7 +47,7 @@ public class AppRunner {
     private UniversalArray<Product> getAllowedProducts() {
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         for (int i = 0; i < products.size(); i++) {
-            if (coinAcceptor.getAmount() >= products.get(i).getPrice()) {
+            if (paymentMethod.getAmount() >= products.get(i).getPrice()) {
                 allowProducts.add(products.get(i));
             }
         }
@@ -61,7 +61,7 @@ public class AppRunner {
         try {
             for (int i = 0; i < products.size(); i++) {
                 if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-                    coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+                    paymentMethod.setAmount(paymentMethod.getAmount() - products.get(i).getPrice());
                     print("Вы купили " + products.get(i).getName());
                     break;
                 } else if ("h".equalsIgnoreCase(action)) {
@@ -96,4 +96,40 @@ public class AppRunner {
     private void print(String msg) {
         System.out.println(msg);
     }
-}
+
+    private PaymentMethod choosePayingMethod() {
+        System.out.println("Выберите способ оплаты: ");
+        System.out.println("1 - наличными");
+        System.out.println("2 - монетами");
+        System.out.println("3 - картой");
+        Scanner sc = new Scanner(System.in);
+        int numberOfMethod = sc.nextInt();
+
+        if (numberOfMethod == 1) {
+            System.out.println("Введите сумму для оплаты наличными: ");
+            Scanner scan = new Scanner(System.in);
+            int cash = sc.nextInt();
+            return new CashAcceptor(cash);
+        } else if (numberOfMethod == 2) {
+            System.out.println("Внесите сумму монет: ");
+            Scanner scan = new Scanner(System.in);
+            int cash = sc.nextInt();
+            return new CoinAcceptor(cash);
+
+        } else if (numberOfMethod == 3) {
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Введите номер карты: ");
+            int cardNumber = scan.nextInt();
+            System.out.println("Введите пароль: ");
+            int password = scan.nextInt();
+            System.out.println("Введите сумму для списания: ");
+            int sum = scan.nextInt();
+            return new Terminal(sum, cardNumber, password);
+
+        } else {
+            System.out.println("Введено неверное число, попробуйте еще раз!");
+        }
+        return choosePayingMethod();
+    }
+
+    }
